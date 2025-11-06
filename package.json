@@ -10,7 +10,10 @@
     "dev:api": "npm run dev -w apps/api",
     "kubb": "kubb --config kubb.config.ts",
     "generate:client": "npm run kubb",
-    "generate:client:auto": "node scripts/generate-client.js"
+    "generate:client:auto": "node scripts/generate-client.js",
+    "dev:all": "docker compose -f ./compose.yaml up -d postgres && turbo run dev",
+    "db:up": "docker compose -f ./compose.yaml up -d postgres",
+    "studio": "npm run db:up && npm run prisma:studio -w apps/api"
   },
   "devDependencies": {
     "@kubb/core": "^4.5.7",

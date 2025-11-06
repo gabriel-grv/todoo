@@ -2,7 +2,7 @@
 
 import { PropsWithChildren, useEffect, useState } from "react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { setConfig } from "../src/generated/.kubb/fetcher"
+import { setConfig } from "./src/generated/.kubb/fetcher"
 
 export function AppProviders({ children }: PropsWithChildren) {
   const [queryClient] = useState(() => new QueryClient())

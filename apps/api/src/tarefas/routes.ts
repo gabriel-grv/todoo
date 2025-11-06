@@ -1,16 +1,6 @@
 import type { fastifyTypedInstance } from '../types.ts'
 import { z } from 'zod'
-import crypto from 'node:crypto'
-// removido import incorreto de 'reply'
-
-interface Tarefa {
-  id: string
-  titulo: string
-  descricao: string
-  completo: boolean
-}
-
-let tarefasList: Tarefa[] = []
+import { prisma } from '../lib/prisma.ts'
 
 export default async function tarefasRoutes(app: fastifyTypedInstance) {
   app.get('/tasks', {
@@ -27,8 +17,9 @@ export default async function tarefasRoutes(app: fastifyTypedInstance) {
         })),
       }
     },
-  }, () => {
-    return tarefasList
+  }, async () => {
+    const tarefas = await prisma.task.findMany({ orderBy: { createdAt: 'desc' } })
+    return tarefas
   })
 
   app.post('/tasks', {
@@ -47,15 +38,10 @@ export default async function tarefasRoutes(app: fastifyTypedInstance) {
     },
   },async (request, reply) => {
     const { titulo, descricao, completo } = request.body
-
-    tarefasList.push({
-      id: crypto.randomUUID(),
-      titulo,
-      descricao,
-      completo,
+    await prisma.task.create({
+      data: { titulo, descricao, completo },
     })
     return reply.status(201).send({ message: 'Tarefa criada com sucesso' })
-    
   })
 
   app.delete('/tasks/:id', {
@@ -69,11 +55,11 @@ export default async function tarefasRoutes(app: fastifyTypedInstance) {
     },
   }, async (request, reply) => {
     const { id } = request.params
-    const tarefa = tarefasList.find((tarefa) => tarefa.id === id)
+    const tarefa = await prisma.task.findUnique({ where: { id } })
     if (!tarefa) {
       return reply.status(404).send({ error: 'Tarefa não encontrada' })
     }
-    tarefasList = tarefasList.filter((tarefa) => tarefa.id !== id)
+    await prisma.task.delete({ where: { id } })
     return reply.status(201).send({ message: 'Tarefa deletada com sucesso' })
   })
 
@@ -94,13 +80,14 @@ export default async function tarefasRoutes(app: fastifyTypedInstance) {
   }, async (request, reply) => {
     const { id } = request.params
     const { titulo, descricao, completo } = request.body
-    const tarefa = tarefasList.find((tarefa) => tarefa.id === id)
+    const tarefa = await prisma.task.findUnique({ where: { id } })
     if (!tarefa) {
       return reply.status(404).send({ error: 'Tarefa não encontrada' })
     }
-    tarefa.titulo = titulo
-    tarefa.descricao = descricao
-    tarefa.completo = completo
-    return reply.status(201).send({message : 'Tarefa atualizada com exito'})
+    await prisma.task.update({
+      where: { id },
+      data: { titulo, descricao, completo },
+    })
+    return reply.status(201).send({ message: 'Tarefa atualizada com exito' })
   })
 }

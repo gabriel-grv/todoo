@@ -14,7 +14,11 @@ app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
 // CORS (libera tudo em dev; restrinja em prod)
-await app.register(fastifyCors, { origin: '*' })
+await app.register(fastifyCors, {
+  origin: '*',
+  methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+})
 
 app.register(fastifySwagger, {
   openapi: {

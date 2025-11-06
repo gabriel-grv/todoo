@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useListTasks, listTasksQueryKey } from "../src/generated/useListTasks";
-import { useCreateTask } from "../src/generated/useCreateTask";
-import { useUpdateTask } from "../src/generated/useUpdateTask";
-import { useDeleteTask } from "../src/generated/useDeleteTask";
+import { useListTasks, listTasksQueryKey } from "./src/generated/useListTasks";
+import { useCreateTask } from "./src/generated/useCreateTask";
+import { useUpdateTask } from "./src/generated/useUpdateTask";
+import { useDeleteTask } from "./src/generated/useDeleteTask";
 
 type UiTask = {
   id: string;
