@@ -5,7 +5,11 @@ import { validatorCompiler, serializerCompiler, jsonSchemaTransform } from 'fast
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUi from '@fastify/swagger-ui'
-import tarefasRoutes from './tarefas/routes.ts'
+import { registerHttp } from './http/index.ts'
+import { auth } from './lib/auth.ts'
+import middie from '@fastify/middie'
+import { toNodeHandler } from 'better-auth/node'
+import { fromNodeHeaders } from 'better-auth/node'
 
 const app = Fastify({logger:true}).withTypeProvider<ZodTypeProvider>() // <- tipagem com Zod 
 
@@ -15,10 +19,13 @@ app.setSerializerCompiler(serializerCompiler)
 
 // CORS (libera tudo em dev; restrinja em prod)
 await app.register(fastifyCors, {
-  origin: '*',
+  origin: ['http://localhost:3000'],
+  credentials: true,
   methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 })
+
+await app.register(middie)
 
 app.register(fastifySwagger, {
   openapi: {
@@ -45,7 +52,43 @@ app.get('/', () => {
   return { message: 'API is running' }
 })
 
-await app.register(tarefasRoutes, { prefix: '/tarefas' })
+await registerHttp(app)
+// CORS + encaminhamento (via middie) antes do roteamento do Fastify
+app.use('/api/auth/', (req, res, next) => {
+  const origin = 'http://localhost:3000'
+  res.setHeader('Access-Control-Allow-Origin', origin)
+  res.setHeader('Vary', 'Origin')
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS')
+  if (req.method === 'OPTIONS') {
+    res.statusCode = 204
+    res.end()
+    return
+  }
+  next()
+})
+
+// Compat: alguns clients do Better Auth usam /api/auth/get-session
+app.get('/api/auth/get-session', async (request, reply) => {
+  const { headers, response } = await auth.api.getSession({
+    headers: fromNodeHeaders(request.headers as any),
+    returnHeaders: true,
+  })
+  const cookies = (headers as any).getSetCookie?.()
+  if (cookies && cookies.length) reply.header('set-cookie', cookies)
+  return reply.send(response)
+})
+
+const betterAuthHandler = toNodeHandler(auth)
+
+app.use('/api/auth', (req, res, next) => {
+  if (req.url?.startsWith('/get-session')) {
+    return next?.()
+  }
+  return betterAuthHandler(req, res)
+})
+
 
 //server
 const start = async () => {

@@ -14,6 +14,36 @@ export type CreateTask201 = {
     message: string;
 };
 
+/**
+ * @description Default Response
+*/
+export type CreateTask400 = {
+    /**
+     * @type string
+    */
+    error: string;
+};
+
+/**
+ * @description Default Response
+*/
+export type CreateTask401 = {
+    /**
+     * @type string
+    */
+    error: string;
+};
+
+/**
+ * @description Default Response
+*/
+export type CreateTask403 = {
+    /**
+     * @type string
+    */
+    error: string;
+};
+
 export type CreateTaskMutationRequest = {
     /**
      * @type string
@@ -27,6 +57,11 @@ export type CreateTaskMutationRequest = {
      * @type boolean
     */
     completo: boolean;
+    /**
+     * @minLength 1
+     * @type string
+    */
+    userId: string;
 };
 
 export type CreateTaskMutationResponse = CreateTask201;
@@ -34,5 +69,5 @@ export type CreateTaskMutationResponse = CreateTask201;
 export type CreateTaskMutation = {
     Response: CreateTask201;
     Request: CreateTaskMutationRequest;
-    Errors: any;
+    Errors: CreateTask400 | CreateTask401 | CreateTask403;
 };

@@ -4,9 +4,9 @@
 */
 
 import fetch from "./.kubb/fetcher.ts";
-import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
-import type { DeleteTaskMutationResponse, DeleteTaskPathParams } from "./types/DeleteTask.ts";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
+import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
+import type { DeleteTaskMutationResponse, DeleteTaskPathParams, DeleteTask401, DeleteTask403, DeleteTask404 } from "./types/DeleteTask.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const deleteTaskMutationKey = () => [{ url: '/tarefas/tasks/:id' }] as const
@@ -20,13 +20,13 @@ export type DeleteTaskMutationKey = ReturnType<typeof deleteTaskMutationKey>
 export async function deleteTask(id: DeleteTaskPathParams["id"], config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<DeleteTaskMutationResponse, ResponseErrorConfig<Error>, unknown>({ method : "DELETE", url : `/tarefas/tasks/${id}`, ... requestConfig })  
+  const res = await request<DeleteTaskMutationResponse, ResponseErrorConfig<DeleteTask401 | DeleteTask403 | DeleteTask404>, unknown>({ method : "DELETE", url : `/tarefas/tasks/${id}`, ... requestConfig })  
   return res.data
 }
 
 export function deleteTaskMutationOptions(config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const mutationKey = deleteTaskMutationKey()
-  return mutationOptions<DeleteTaskMutationResponse, ResponseErrorConfig<Error>, {id: DeleteTaskPathParams["id"]}, typeof mutationKey>({
+  return mutationOptions<DeleteTaskMutationResponse, ResponseErrorConfig<DeleteTask401 | DeleteTask403 | DeleteTask404>, {id: DeleteTaskPathParams["id"]}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id }) => {
       return deleteTask(id, config)
@@ -40,7 +40,7 @@ export function deleteTaskMutationOptions(config: Partial<RequestConfig> & { cli
  */
 export function useDeleteTask<TContext>(options: 
 {
-  mutation?: UseMutationOptions<DeleteTaskMutationResponse, ResponseErrorConfig<Error>, {id: DeleteTaskPathParams["id"]}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<DeleteTaskMutationResponse, ResponseErrorConfig<DeleteTask401 | DeleteTask403 | DeleteTask404>, {id: DeleteTaskPathParams["id"]}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch },
 }
  = {}) {
@@ -48,11 +48,11 @@ export function useDeleteTask<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? deleteTaskMutationKey()
 
-  const baseOptions = deleteTaskMutationOptions(config) as UseMutationOptions<DeleteTaskMutationResponse, ResponseErrorConfig<Error>, {id: DeleteTaskPathParams["id"]}, TContext>
+  const baseOptions = deleteTaskMutationOptions(config) as UseMutationOptions<DeleteTaskMutationResponse, ResponseErrorConfig<DeleteTask401 | DeleteTask403 | DeleteTask404>, {id: DeleteTaskPathParams["id"]}, TContext>
 
-  return useMutation<DeleteTaskMutationResponse, ResponseErrorConfig<Error>, {id: DeleteTaskPathParams["id"]}, TContext>({
+  return useMutation<DeleteTaskMutationResponse, ResponseErrorConfig<DeleteTask401 | DeleteTask403 | DeleteTask404>, {id: DeleteTaskPathParams["id"]}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<DeleteTaskMutationResponse, ResponseErrorConfig<Error>, {id: DeleteTaskPathParams["id"]}, TContext>
+  }, queryClient) as UseMutationResult<DeleteTaskMutationResponse, ResponseErrorConfig<DeleteTask401 | DeleteTask403 | DeleteTask404>, {id: DeleteTaskPathParams["id"]}, TContext>
 }

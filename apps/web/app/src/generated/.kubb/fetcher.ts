@@ -1,5 +1,5 @@
-import type { AxiosError, AxiosHeaders, AxiosRequestConfig, AxiosResponse } from 'axios'
-import axios from 'axios'
+import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, { AxiosHeaders } from 'axios'
 
 declare const AXIOS_BASE: string
 declare const AXIOS_HEADERS: string
@@ -17,6 +17,7 @@ export type RequestConfig<TData = unknown> = {
   signal?: AbortSignal
   validateStatus?: (status: number) => boolean
   headers?: AxiosRequestConfig['headers']
+  withCredentials?: boolean
 }
 
 /**
@@ -36,19 +37,24 @@ let _config: Partial<RequestConfig> = {
   headers: typeof AXIOS_HEADERS !== 'undefined' ? (JSON.parse(AXIOS_HEADERS) as AxiosHeaders) : undefined,
 }
 
+const axiosInstanceInternal = axios.create()
+
 export const getConfig = () => _config
 
 export const setConfig = (config: RequestConfig) => {
-  _config = config
+  _config = {
+    ..._config,
+    ...config,
+  }
   return getConfig()
 }
 
-export const axiosInstance = axios.create(getConfig())
+export const axiosInstance = axiosInstanceInternal
 
 export const client = async <TData, TError = unknown, TVariables = unknown>(config: RequestConfig<TVariables>): Promise<ResponseConfig<TData>> => {
   const globalConfig = getConfig()
 
-  return axiosInstance
+  return axiosInstanceInternal
     .request<TData, ResponseConfig<TData>>({
       ...globalConfig,
       ...config,
@@ -56,6 +62,8 @@ export const client = async <TData, TError = unknown, TVariables = unknown>(conf
         ...globalConfig.headers,
         ...config.headers,
       },
+      withCredentials:
+        config.withCredentials ?? globalConfig.withCredentials,
     })
     .catch((e: AxiosError<TError>) => {
       throw e

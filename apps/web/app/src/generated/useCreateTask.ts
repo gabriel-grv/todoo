@@ -4,9 +4,9 @@
 */
 
 import fetch from "./.kubb/fetcher.ts";
-import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
-import type { CreateTaskMutationRequest, CreateTaskMutationResponse } from "./types/CreateTask.ts";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
+import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
+import type { CreateTaskMutationRequest, CreateTaskMutationResponse, CreateTask400, CreateTask401, CreateTask403 } from "./types/CreateTask.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const createTaskMutationKey = () => [{ url: '/tarefas/tasks' }] as const
@@ -22,13 +22,13 @@ export async function createTask(data: CreateTaskMutationRequest, config: Partia
   
   const requestData = data  
   
-  const res = await request<CreateTaskMutationResponse, ResponseErrorConfig<Error>, CreateTaskMutationRequest>({ method : "POST", url : `/tarefas/tasks`, data : requestData, ... requestConfig })  
+  const res = await request<CreateTaskMutationResponse, ResponseErrorConfig<CreateTask400 | CreateTask401 | CreateTask403>, CreateTaskMutationRequest>({ method : "POST", url : `/tarefas/tasks`, data : requestData, ... requestConfig })  
   return res.data
 }
 
 export function createTaskMutationOptions(config: Partial<RequestConfig<CreateTaskMutationRequest>> & { client?: typeof fetch } = {}) {
   const mutationKey = createTaskMutationKey()
-  return mutationOptions<CreateTaskMutationResponse, ResponseErrorConfig<Error>, {data: CreateTaskMutationRequest}, typeof mutationKey>({
+  return mutationOptions<CreateTaskMutationResponse, ResponseErrorConfig<CreateTask400 | CreateTask401 | CreateTask403>, {data: CreateTaskMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ data }) => {
       return createTask(data, config)
@@ -42,7 +42,7 @@ export function createTaskMutationOptions(config: Partial<RequestConfig<CreateTa
  */
 export function useCreateTask<TContext>(options: 
 {
-  mutation?: UseMutationOptions<CreateTaskMutationResponse, ResponseErrorConfig<Error>, {data: CreateTaskMutationRequest}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<CreateTaskMutationResponse, ResponseErrorConfig<CreateTask400 | CreateTask401 | CreateTask403>, {data: CreateTaskMutationRequest}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig<CreateTaskMutationRequest>> & { client?: typeof fetch },
 }
  = {}) {
@@ -50,11 +50,11 @@ export function useCreateTask<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? createTaskMutationKey()
 
-  const baseOptions = createTaskMutationOptions(config) as UseMutationOptions<CreateTaskMutationResponse, ResponseErrorConfig<Error>, {data: CreateTaskMutationRequest}, TContext>
+  const baseOptions = createTaskMutationOptions(config) as UseMutationOptions<CreateTaskMutationResponse, ResponseErrorConfig<CreateTask400 | CreateTask401 | CreateTask403>, {data: CreateTaskMutationRequest}, TContext>
 
-  return useMutation<CreateTaskMutationResponse, ResponseErrorConfig<Error>, {data: CreateTaskMutationRequest}, TContext>({
+  return useMutation<CreateTaskMutationResponse, ResponseErrorConfig<CreateTask400 | CreateTask401 | CreateTask403>, {data: CreateTaskMutationRequest}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<CreateTaskMutationResponse, ResponseErrorConfig<Error>, {data: CreateTaskMutationRequest}, TContext>
+  }, queryClient) as UseMutationResult<CreateTaskMutationResponse, ResponseErrorConfig<CreateTask400 | CreateTask401 | CreateTask403>, {data: CreateTaskMutationRequest}, TContext>
 }

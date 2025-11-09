@@ -4,9 +4,9 @@
 */
 
 import fetch from "./.kubb/fetcher.ts";
-import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
-import type { UpdateTaskMutationRequest, UpdateTaskMutationResponse, UpdateTaskPathParams } from "./types/UpdateTask.ts";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
+import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
+import type { UpdateTaskMutationRequest, UpdateTaskMutationResponse, UpdateTaskPathParams, UpdateTask401, UpdateTask403, UpdateTask404 } from "./types/UpdateTask.ts";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const updateTaskMutationKey = () => [{ url: '/tarefas/tasks/:id' }] as const
@@ -22,13 +22,13 @@ export async function updateTask(id: UpdateTaskPathParams["id"], data: UpdateTas
   
   const requestData = data  
   
-  const res = await request<UpdateTaskMutationResponse, ResponseErrorConfig<Error>, UpdateTaskMutationRequest>({ method : "PUT", url : `/tarefas/tasks/${id}`, data : requestData, ... requestConfig })  
+  const res = await request<UpdateTaskMutationResponse, ResponseErrorConfig<UpdateTask401 | UpdateTask403 | UpdateTask404>, UpdateTaskMutationRequest>({ method : "PUT", url : `/tarefas/tasks/${id}`, data : requestData, ... requestConfig })  
   return res.data
 }
 
 export function updateTaskMutationOptions(config: Partial<RequestConfig<UpdateTaskMutationRequest>> & { client?: typeof fetch } = {}) {
   const mutationKey = updateTaskMutationKey()
-  return mutationOptions<UpdateTaskMutationResponse, ResponseErrorConfig<Error>, {id: UpdateTaskPathParams["id"], data: UpdateTaskMutationRequest}, typeof mutationKey>({
+  return mutationOptions<UpdateTaskMutationResponse, ResponseErrorConfig<UpdateTask401 | UpdateTask403 | UpdateTask404>, {id: UpdateTaskPathParams["id"], data: UpdateTaskMutationRequest}, typeof mutationKey>({
     mutationKey,
     mutationFn: async({ id, data }) => {
       return updateTask(id, data, config)
@@ -42,7 +42,7 @@ export function updateTaskMutationOptions(config: Partial<RequestConfig<UpdateTa
  */
 export function useUpdateTask<TContext>(options: 
 {
-  mutation?: UseMutationOptions<UpdateTaskMutationResponse, ResponseErrorConfig<Error>, {id: UpdateTaskPathParams["id"], data: UpdateTaskMutationRequest}, TContext> & { client?: QueryClient },
+  mutation?: UseMutationOptions<UpdateTaskMutationResponse, ResponseErrorConfig<UpdateTask401 | UpdateTask403 | UpdateTask404>, {id: UpdateTaskPathParams["id"], data: UpdateTaskMutationRequest}, TContext> & { client?: QueryClient },
   client?: Partial<RequestConfig<UpdateTaskMutationRequest>> & { client?: typeof fetch },
 }
  = {}) {
@@ -50,11 +50,11 @@ export function useUpdateTask<TContext>(options:
   const { client: queryClient, ...mutationOptions } = mutation;
   const mutationKey = mutationOptions.mutationKey ?? updateTaskMutationKey()
 
-  const baseOptions = updateTaskMutationOptions(config) as UseMutationOptions<UpdateTaskMutationResponse, ResponseErrorConfig<Error>, {id: UpdateTaskPathParams["id"], data: UpdateTaskMutationRequest}, TContext>
+  const baseOptions = updateTaskMutationOptions(config) as UseMutationOptions<UpdateTaskMutationResponse, ResponseErrorConfig<UpdateTask401 | UpdateTask403 | UpdateTask404>, {id: UpdateTaskPathParams["id"], data: UpdateTaskMutationRequest}, TContext>
 
-  return useMutation<UpdateTaskMutationResponse, ResponseErrorConfig<Error>, {id: UpdateTaskPathParams["id"], data: UpdateTaskMutationRequest}, TContext>({
+  return useMutation<UpdateTaskMutationResponse, ResponseErrorConfig<UpdateTask401 | UpdateTask403 | UpdateTask404>, {id: UpdateTaskPathParams["id"], data: UpdateTaskMutationRequest}, TContext>({
     ...baseOptions,
     mutationKey,
     ...mutationOptions,
-  }, queryClient) as UseMutationResult<UpdateTaskMutationResponse, ResponseErrorConfig<Error>, {id: UpdateTaskPathParams["id"], data: UpdateTaskMutationRequest}, TContext>
+  }, queryClient) as UseMutationResult<UpdateTaskMutationResponse, ResponseErrorConfig<UpdateTask401 | UpdateTask403 | UpdateTask404>, {id: UpdateTaskPathParams["id"], data: UpdateTaskMutationRequest}, TContext>
 }

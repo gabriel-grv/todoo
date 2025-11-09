@@ -4,31 +4,45 @@
 */
 
 
+export type ListTasksQueryParams = {
+    /**
+     * @minLength 1
+     * @type string | undefined
+    */
+    userId?: string;
+};
+
+export const ownerRoleEnum = {
+    "ADMIN": "ADMIN"
+} as const;
+
+export type OwnerRoleEnumKey = (typeof ownerRoleEnum)[keyof typeof ownerRoleEnum];
+
+export const ownerRoleEnum2 = {
+    "USER": "USER"
+} as const;
+
+export type OwnerRoleEnum2Key = (typeof ownerRoleEnum2)[keyof typeof ownerRoleEnum2];
+
 /**
  * @description Default Response
 */
-export type ListTasks200 = {
+export type ListTasks200 = OwnerRoleEnumKey[];
+
+/**
+ * @description Default Response
+*/
+export type ListTasks401 = {
     /**
      * @type string
     */
-    id: string;
-    /**
-     * @type string
-    */
-    titulo: string;
-    /**
-     * @type string
-    */
-    descricao: string;
-    /**
-     * @type boolean
-    */
-    completo: boolean;
-}[];
+    error: string;
+};
 
 export type ListTasksQueryResponse = ListTasks200;
 
 export type ListTasksQuery = {
     Response: ListTasks200;
-    Errors: any;
+    QueryParams: ListTasksQueryParams;
+    Errors: ListTasks401;
 };

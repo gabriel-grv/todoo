@@ -9,7 +9,7 @@ export default defineConfig({
     path: process.env.KUBB_OPENAPI_URL ?? 'http://localhost:3001/docs/json',
   },
   output: {
-    path: './apps/web/src/generated',
+    path: './apps/web/app/src/generated',
     clean: true,
   },
   plugins: [

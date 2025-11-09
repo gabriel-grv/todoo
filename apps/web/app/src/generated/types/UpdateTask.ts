@@ -14,7 +14,42 @@ export type UpdateTaskPathParams = {
 /**
  * @description Default Response
 */
-export type UpdateTask200 = any;
+export type UpdateTask200 = {
+    /**
+     * @type string
+    */
+    message: string;
+};
+
+/**
+ * @description Default Response
+*/
+export type UpdateTask401 = {
+    /**
+     * @type string
+    */
+    error: string;
+};
+
+/**
+ * @description Default Response
+*/
+export type UpdateTask403 = {
+    /**
+     * @type string
+    */
+    error: string;
+};
+
+/**
+ * @description Default Response
+*/
+export type UpdateTask404 = {
+    /**
+     * @type string
+    */
+    error: string;
+};
 
 export type UpdateTaskMutationRequest = {
     /**
@@ -29,6 +64,11 @@ export type UpdateTaskMutationRequest = {
      * @type boolean
     */
     completo: boolean;
+    /**
+     * @minLength 1
+     * @type string
+    */
+    userId: string;
 };
 
 export type UpdateTaskMutationResponse = UpdateTask200;
@@ -37,5 +77,5 @@ export type UpdateTaskMutation = {
     Response: UpdateTask200;
     Request: UpdateTaskMutationRequest;
     PathParams: UpdateTaskPathParams;
-    Errors: any;
+    Errors: UpdateTask401 | UpdateTask403 | UpdateTask404;
 };

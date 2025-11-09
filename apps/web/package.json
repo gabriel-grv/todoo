@@ -11,6 +11,7 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@casl/ability": "^6.7.3",
     "@repo/ui": "*",
     "@tanstack/react-query": "^5.90.7",
     "axios": "^1.13.2",
@@ -21,10 +22,14 @@
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9.39.1",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^4.1.17",
     "typescript": "5.9.2"
   }
 }

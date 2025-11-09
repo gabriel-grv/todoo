@@ -4,57 +4,57 @@
 */
 
 import fetch from "./.kubb/fetcher.ts";
-import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
-import type { ListTasksQueryResponse } from "./types/ListTasks.ts";
 import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
+import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
+import type { ListTasksQueryResponse, ListTasksQueryParams, ListTasks401 } from "./types/ListTasks.ts";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const listTasksQueryKey = () => [{ url: '/tarefas/tasks' }] as const
+export const listTasksQueryKey = (params?: ListTasksQueryParams) => [{ url: '/tarefas/tasks' }, ...(params ? [params] : [])] as const
 
 export type ListTasksQueryKey = ReturnType<typeof listTasksQueryKey>
 
 /**
- * @description Lista todas as tarefas
+ * @description Lista tarefas do usuário
  * {@link /tarefas/tasks}
  */
-export async function listTasks(config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+export async function listTasks(params?: ListTasksQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<ListTasksQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/tarefas/tasks`, ... requestConfig })  
+  const res = await request<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401>, unknown>({ method : "GET", url : `/tarefas/tasks`, params, ... requestConfig })  
   return res.data
 }
 
-export function listTasksQueryOptions(config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
-  const queryKey = listTasksQueryKey()
-  return queryOptions<ListTasksQueryResponse, ResponseErrorConfig<Error>, ListTasksQueryResponse, typeof queryKey>({
+export function listTasksQueryOptions(params?: ListTasksQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
+  const queryKey = listTasksQueryKey(params)
+  return queryOptions<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401>, ListTasksQueryResponse, typeof queryKey>({
  
    queryKey,
    queryFn: async ({ signal }) => {
       config.signal = signal
-      return listTasks(config)
+      return listTasks(params, config)
    },
   })
 }
 
 /**
- * @description Lista todas as tarefas
+ * @description Lista tarefas do usuário
  * {@link /tarefas/tasks}
  */
-export function useListTasks<TData = ListTasksQueryResponse, TQueryData = ListTasksQueryResponse, TQueryKey extends QueryKey = ListTasksQueryKey>(options: 
+export function useListTasks<TData = ListTasksQueryResponse, TQueryData = ListTasksQueryResponse, TQueryKey extends QueryKey = ListTasksQueryKey>(params?: ListTasksQueryParams, options: 
 {
-  query?: Partial<QueryObserverOptions<ListTasksQueryResponse, ResponseErrorConfig<Error>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
+  query?: Partial<QueryObserverOptions<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
 }
  = {}) {
   const { query: queryConfig = {}, client: config = {} } = options ?? {}
   const { client: queryClient, ...queryOptions } = queryConfig
-  const queryKey = queryOptions?.queryKey ?? listTasksQueryKey()
+  const queryKey = queryOptions?.queryKey ?? listTasksQueryKey(params)
 
   const query = useQuery({
-   ...listTasksQueryOptions(config),
+   ...listTasksQueryOptions(params, config),
    queryKey,
    ...queryOptions
-  } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<Error>> & { queryKey: TQueryKey }
+  } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<ListTasks401>> & { queryKey: TQueryKey }
 
   query.queryKey = queryKey as TQueryKey
 

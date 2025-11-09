@@ -14,12 +14,47 @@ export type DeleteTaskPathParams = {
 /**
  * @description Default Response
 */
-export type DeleteTask200 = any;
+export type DeleteTask200 = {
+    /**
+     * @type string
+    */
+    message: string;
+};
+
+/**
+ * @description Default Response
+*/
+export type DeleteTask401 = {
+    /**
+     * @type string
+    */
+    error: string;
+};
+
+/**
+ * @description Default Response
+*/
+export type DeleteTask403 = {
+    /**
+     * @type string
+    */
+    error: string;
+};
+
+/**
+ * @description Default Response
+*/
+export type DeleteTask404 = {
+    /**
+     * @type string
+    */
+    error: string;
+};
 
 export type DeleteTaskMutationResponse = DeleteTask200;
 
 export type DeleteTaskMutation = {
     Response: DeleteTask200;
     PathParams: DeleteTaskPathParams;
-    Errors: any;
+    Errors: DeleteTask401 | DeleteTask403 | DeleteTask404;
 };
