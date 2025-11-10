@@ -4,9 +4,9 @@
 */
 
 import fetch from "./.kubb/fetcher.ts";
-import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
 import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
 import type { GetApiAuthGetSessionQueryResponse } from "./types/GetApiAuthGetSession.ts";
+import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 export const getApiAuthGetSessionSuspenseQueryKey = () => [{ url: '/api/auth/get-session' }] as const

@@ -7,6 +7,9 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { usePostV1AuthSignInEmail } from "../src/generated/usePostV1AuthSignInEmail";
+import client from "../src/generated/.kubb/fetcher";
+import { axiosInstance } from "../src/generated/.kubb/fetcher";
+import type { RequestConfig } from "../src/generated/.kubb/fetcher";
 import { useUpdateUser } from "../src/generated/useUpdateUser";
 import { useGetUser } from "../src/generated/useGetUser";
 import { authClient } from "../../lib/auth-client";
@@ -20,7 +23,20 @@ export default function RegisterPage() {
   const [role, setRole] = useState<"ADMIN" | "USER">("USER");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const signUp = usePostV1AuthSignInEmail();
+  const [hasAnyUsers, setHasAnyUsers] = useState<boolean | null>(null);
+  // Cliente temporário sem credenciais para evitar qualquer Set-Cookie via CORS neste POST
+  const noCredentialsClient: typeof client = ((
+    cfg: RequestConfig<unknown>,
+  ) => {
+    const prev = axiosInstance.defaults.withCredentials;
+    axiosInstance.defaults.withCredentials = false;
+    return client(cfg).finally(() => {
+      axiosInstance.defaults.withCredentials = prev;
+    });
+  }) as typeof client;
+  noCredentialsClient.getConfig = client.getConfig;
+  noCredentialsClient.setConfig = client.setConfig;
+  const signUp = usePostV1AuthSignInEmail({ client: { client: noCredentialsClient } });
   const updateUser = useUpdateUser();
 
   const redirectTarget = useMemo(() => {
@@ -42,11 +58,41 @@ export default function RegisterPage() {
   });
   const isAdmin = adminQuery.data?.role === "ADMIN";
 
+  // Verifica se já existem usuários no sistema
   useEffect(() => {
-    if (!isSessionLoading && session === null) {
+    let cancelled = false;
+    async function checkHasAny() {
+      try {
+        const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+        const res = await fetch(`${apiBaseURL.replace(/\/$/, "")}/usuarios/has-any`, {
+          credentials: "include",
+        });
+        if (!cancelled) {
+          if (res.ok) {
+            const data = await res.json();
+            setHasAnyUsers(Boolean(data?.hasAny));
+          } else {
+            setHasAnyUsers(true); // falha: comporta-se como se já existissem usuários
+          }
+        }
+      } catch {
+        if (!cancelled) setHasAnyUsers(true);
+      }
+    }
+    checkHasAny();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isSessionLoading) return;
+    if (hasAnyUsers === null) return;
+    // Se já existem usuários e não há sessão, redireciona para login
+    if (hasAnyUsers && session === null) {
       router.replace("/login?from=/register");
     }
-  }, [isSessionLoading, session, router]);
+  }, [isSessionLoading, session, router, hasAnyUsers]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -63,6 +109,10 @@ export default function RegisterPage() {
           name: fallbackName,
           email,
           password,
+          // Define role no signup:
+          // - Se não há usuários, permite escolher livremente (primeiro usuário pode ser ADMIN)
+          // - Se já há usuários, somente admins verão esta tela; então respeitamos a escolha
+          role: role,
         },
       });
       if (isAdmin && role === "ADMIN") {
@@ -83,7 +133,7 @@ export default function RegisterPage() {
     }
   }
 
-  if (isSessionLoading || adminQuery.isLoading) {
+  if (isSessionLoading || adminQuery.isLoading || hasAnyUsers === null) {
     return (
       <div className="min-h-[calc(100vh-2rem)] flex items-center justify-center p-4">
         <Card className="w-full max-w-sm">
@@ -95,7 +145,9 @@ export default function RegisterPage() {
     );
   }
 
-  if (!isAdmin) {
+  // Se não é admin e JÁ existem usuários, bloqueia criação;
+  // se não existem usuários, libera tela sem sessão/admin.
+  if (hasAnyUsers && !isAdmin) {
     return (
       <div className="min-h-[calc(100vh-2rem)] flex items-center justify-center p-4">
         <Card className="w-full max-w-md">

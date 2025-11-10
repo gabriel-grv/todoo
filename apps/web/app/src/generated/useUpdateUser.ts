@@ -4,9 +4,9 @@
 */
 
 import fetch from "./.kubb/fetcher.ts";
-import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
 import type { UpdateUserMutationRequest, UpdateUserMutationResponse, UpdateUserPathParams, UpdateUser401, UpdateUser403, UpdateUser404 } from "./types/UpdateUser.ts";
+import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const updateUserMutationKey = () => [{ url: '/usuarios/users/:id' }] as const

@@ -33,6 +33,11 @@ export default function TarefasPage() {
     if (userQuery.isLoading) return;
 
     const role = userQuery.data?.role;
+    if (userQuery.isError) {
+      // Falha ao obter usuário (ex.: sessão não corresponde) -> vai para área comum
+      router.replace("/tarefas/minhas");
+      return;
+    }
     if (role === "ADMIN") {
       router.replace("/tarefas/admin");
       return;
@@ -41,7 +46,7 @@ export default function TarefasPage() {
       router.replace("/tarefas/minhas");
       return;
     }
-  }, [userId, userQuery.isLoading, userQuery.data?.role, router]);
+  }, [userId, userQuery.isLoading, userQuery.isError, userQuery.data?.role, router]);
 
   return (
     <main className="flex min-h-[calc(100vh-2rem)] items-center justify-center p-4">

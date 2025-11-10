@@ -14,6 +14,21 @@ export default async function usuariosRoutes(app: fastifyTypedInstance) {
     role: roleSchema,
   })
 
+  // Endpoint público para verificar se existe ao menos um usuário
+  app.get('/has-any', {
+    schema: {
+      operationId: 'hasAnyUser',
+      description: 'Retorna se existe pelo menos um usuário',
+      tags: ['usuarios'],
+      response: {
+        200: z.object({ hasAny: z.boolean() }),
+      },
+    },
+  }, async () => {
+    const count = await prisma.user.count()
+    return { hasAny: count > 0 }
+  })
+
   // Listar usuários (campos essenciais)
   app.get('/users', {
     schema: {

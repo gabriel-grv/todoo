@@ -4,9 +4,9 @@
 */
 
 import fetch from "./.kubb/fetcher.ts";
-import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
 import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
-import type { ListTasksQueryResponse, ListTasksQueryParams, ListTasks401 } from "./types/ListTasks.ts";
+import type { ListTasksQueryResponse, ListTasksQueryParams, ListTasks401, ListTasks403 } from "./types/ListTasks.ts";
+import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 export const listTasksSuspenseQueryKey = (params?: ListTasksQueryParams) => [{ url: '/tarefas/tasks' }, ...(params ? [params] : [])] as const
@@ -20,13 +20,13 @@ export type ListTasksSuspenseQueryKey = ReturnType<typeof listTasksSuspenseQuery
 export async function listTasksSuspense(params?: ListTasksQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401>, unknown>({ method : "GET", url : `/tarefas/tasks`, params, ... requestConfig })  
+  const res = await request<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401 | ListTasks403>, unknown>({ method : "GET", url : `/tarefas/tasks`, params, ... requestConfig })  
   return res.data
 }
 
 export function listTasksSuspenseQueryOptions(params?: ListTasksQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const queryKey = listTasksSuspenseQueryKey(params)
-  return queryOptions<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401>, ListTasksQueryResponse, typeof queryKey>({
+  return queryOptions<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401 | ListTasks403>, ListTasksQueryResponse, typeof queryKey>({
  
    queryKey,
    queryFn: async ({ signal }) => {
@@ -42,7 +42,7 @@ export function listTasksSuspenseQueryOptions(params?: ListTasksQueryParams, con
  */
 export function useListTasksSuspense<TData = ListTasksQueryResponse, TQueryKey extends QueryKey = ListTasksSuspenseQueryKey>(params?: ListTasksQueryParams, options: 
 {
-  query?: Partial<UseSuspenseQueryOptions<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401>, TData, TQueryKey>> & { client?: QueryClient },
+  query?: Partial<UseSuspenseQueryOptions<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401 | ListTasks403>, TData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
 }
  = {}) {
@@ -54,7 +54,7 @@ export function useListTasksSuspense<TData = ListTasksQueryResponse, TQueryKey e
    ...listTasksSuspenseQueryOptions(params, config),
    queryKey,
    ...queryOptions
-  } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<ListTasks401>> & { queryKey: TQueryKey }
+  } as unknown as UseSuspenseQueryOptions, queryClient) as UseSuspenseQueryResult<TData, ResponseErrorConfig<ListTasks401 | ListTasks403>> & { queryKey: TQueryKey }
 
   query.queryKey = queryKey as TQueryKey
 

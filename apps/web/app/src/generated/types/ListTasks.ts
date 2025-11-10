@@ -39,10 +39,20 @@ export type ListTasks401 = {
     error: string;
 };
 
+/**
+ * @description Default Response
+*/
+export type ListTasks403 = {
+    /**
+     * @type string
+    */
+    error: string;
+};
+
 export type ListTasksQueryResponse = ListTasks200;
 
 export type ListTasksQuery = {
     Response: ListTasks200;
     QueryParams: ListTasksQueryParams;
-    Errors: ListTasks401;
+    Errors: ListTasks401 | ListTasks403;
 };

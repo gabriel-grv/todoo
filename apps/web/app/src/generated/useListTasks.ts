@@ -4,9 +4,9 @@
 */
 
 import fetch from "./.kubb/fetcher.ts";
-import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
 import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
-import type { ListTasksQueryResponse, ListTasksQueryParams, ListTasks401 } from "./types/ListTasks.ts";
+import type { ListTasksQueryResponse, ListTasksQueryParams, ListTasks401, ListTasks403 } from "./types/ListTasks.ts";
+import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
 export const listTasksQueryKey = (params?: ListTasksQueryParams) => [{ url: '/tarefas/tasks' }, ...(params ? [params] : [])] as const
@@ -20,13 +20,13 @@ export type ListTasksQueryKey = ReturnType<typeof listTasksQueryKey>
 export async function listTasks(params?: ListTasksQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const { client: request = fetch, ...requestConfig } = config  
   
-  const res = await request<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401>, unknown>({ method : "GET", url : `/tarefas/tasks`, params, ... requestConfig })  
+  const res = await request<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401 | ListTasks403>, unknown>({ method : "GET", url : `/tarefas/tasks`, params, ... requestConfig })  
   return res.data
 }
 
 export function listTasksQueryOptions(params?: ListTasksQueryParams, config: Partial<RequestConfig> & { client?: typeof fetch } = {}) {
   const queryKey = listTasksQueryKey(params)
-  return queryOptions<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401>, ListTasksQueryResponse, typeof queryKey>({
+  return queryOptions<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401 | ListTasks403>, ListTasksQueryResponse, typeof queryKey>({
  
    queryKey,
    queryFn: async ({ signal }) => {
@@ -42,7 +42,7 @@ export function listTasksQueryOptions(params?: ListTasksQueryParams, config: Par
  */
 export function useListTasks<TData = ListTasksQueryResponse, TQueryData = ListTasksQueryResponse, TQueryKey extends QueryKey = ListTasksQueryKey>(params?: ListTasksQueryParams, options: 
 {
-  query?: Partial<QueryObserverOptions<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
+  query?: Partial<QueryObserverOptions<ListTasksQueryResponse, ResponseErrorConfig<ListTasks401 | ListTasks403>, TData, TQueryData, TQueryKey>> & { client?: QueryClient },
   client?: Partial<RequestConfig> & { client?: typeof fetch }
 }
  = {}) {
@@ -54,7 +54,7 @@ export function useListTasks<TData = ListTasksQueryResponse, TQueryData = ListTa
    ...listTasksQueryOptions(params, config),
    queryKey,
    ...queryOptions
-  } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<ListTasks401>> & { queryKey: TQueryKey }
+  } as unknown as QueryObserverOptions, queryClient) as UseQueryResult<TData, ResponseErrorConfig<ListTasks401 | ListTasks403>> & { queryKey: TQueryKey }
 
   query.queryKey = queryKey as TQueryKey
 

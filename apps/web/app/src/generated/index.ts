@@ -4,11 +4,12 @@ export type { DeleteTaskPathParams, DeleteTask200, DeleteTask401, DeleteTask403,
 export type { DeleteUserPathParams, DeleteUser200, DeleteUser401, DeleteUser403, DeleteUser404, DeleteUserMutationResponse, DeleteUserMutation } from "./types/DeleteUser.ts";
 export type { GetApiAuthGetSession200, GetApiAuthGetSessionQueryResponse, GetApiAuthGetSessionQuery } from "./types/GetApiAuthGetSession.ts";
 export type { GetUserPathParams, GetUser200RoleEnumKey, GetUser200RoleEnum2Key, GetUser200, GetUser401, GetUser403, GetUser404, GetUserQueryResponse, GetUserQuery } from "./types/GetUser.ts";
-export type { ListTasksQueryParams, OwnerRoleEnumKey, OwnerRoleEnum2Key, ListTasks200, ListTasks401, ListTasksQueryResponse, ListTasksQuery } from "./types/ListTasks.ts";
+export type { HasAnyUser200, HasAnyUserQueryResponse, HasAnyUserQuery } from "./types/HasAnyUser.ts";
+export type { ListTasksQueryParams, OwnerRoleEnumKey, OwnerRoleEnum2Key, ListTasks200, ListTasks401, ListTasks403, ListTasksQueryResponse, ListTasksQuery } from "./types/ListTasks.ts";
 export type { ListUsers200RoleEnumKey, ListUsers200RoleEnum2Key, ListUsers200, ListUsers401, ListUsers403, ListUsersQueryResponse, ListUsersQuery } from "./types/ListUsers.ts";
 export type { PostV1AuthLogin200, PostV1AuthLoginMutationRequest, PostV1AuthLoginMutationResponse, PostV1AuthLoginMutation } from "./types/PostV1AuthLogin.ts";
 export type { PostV1AuthLogout200, PostV1AuthLogoutMutationResponse, PostV1AuthLogoutMutation } from "./types/PostV1AuthLogout.ts";
-export type { PostV1AuthSignInEmail200, PostV1AuthSignInEmailMutationRequest, PostV1AuthSignInEmailMutationResponse, PostV1AuthSignInEmailMutation } from "./types/PostV1AuthSignInEmail.ts";
+export type { PostV1AuthSignInEmail200, PostV1AuthSignInEmailMutationRequestRoleEnumKey, PostV1AuthSignInEmailMutationRequest, PostV1AuthSignInEmailMutationResponse, PostV1AuthSignInEmailMutation } from "./types/PostV1AuthSignInEmail.ts";
 export type { UpdateTaskPathParams, UpdateTask200, UpdateTask401, UpdateTask403, UpdateTask404, UpdateTaskMutationRequest, UpdateTaskMutationResponse, UpdateTaskMutation } from "./types/UpdateTask.ts";
 export type { UpdateUserPathParams, UpdateUser200, UpdateUser401, UpdateUser403, UpdateUser404, UpdateUserMutationRequestRoleEnumKey, UpdateUserMutationRequestRoleEnum2Key, UpdateUserMutationRequest, UpdateUserMutationResponse, UpdateUserMutation } from "./types/UpdateUser.ts";
 export type { CreateTaskMutationKey } from "./useCreateTask.ts";
@@ -19,6 +20,8 @@ export type { GetApiAuthGetSessionQueryKey } from "./useGetApiAuthGetSession.ts"
 export type { GetApiAuthGetSessionSuspenseQueryKey } from "./useGetApiAuthGetSessionSuspense.ts";
 export type { GetUserQueryKey } from "./useGetUser.ts";
 export type { GetUserSuspenseQueryKey } from "./useGetUserSuspense.ts";
+export type { HasAnyUserQueryKey } from "./useHasAnyUser.ts";
+export type { HasAnyUserSuspenseQueryKey } from "./useHasAnyUserSuspense.ts";
 export type { ListTasksQueryKey } from "./useListTasks.ts";
 export type { ListTasksSuspenseQueryKey } from "./useListTasksSuspense.ts";
 export type { ListUsersQueryKey } from "./useListUsers.ts";
@@ -32,6 +35,7 @@ export { createUser201RoleEnum, createUser201RoleEnum2, createUserMutationReques
 export { getUser200RoleEnum, getUser200RoleEnum2 } from "./types/GetUser.ts";
 export { ownerRoleEnum, ownerRoleEnum2 } from "./types/ListTasks.ts";
 export { listUsers200RoleEnum, listUsers200RoleEnum2 } from "./types/ListUsers.ts";
+export { postV1AuthSignInEmailMutationRequestRoleEnum } from "./types/PostV1AuthSignInEmail.ts";
 export { updateUserMutationRequestRoleEnum, updateUserMutationRequestRoleEnum2 } from "./types/UpdateUser.ts";
 export { createTaskMutationKey, createTask, createTaskMutationOptions, useCreateTask } from "./useCreateTask.ts";
 export { createUserMutationKey, createUser, createUserMutationOptions, useCreateUser } from "./useCreateUser.ts";
@@ -41,6 +45,8 @@ export { getApiAuthGetSessionQueryKey, getApiAuthGetSession, getApiAuthGetSessio
 export { getApiAuthGetSessionSuspenseQueryKey, getApiAuthGetSessionSuspense, getApiAuthGetSessionSuspenseQueryOptions, useGetApiAuthGetSessionSuspense } from "./useGetApiAuthGetSessionSuspense.ts";
 export { getUserQueryKey, getUser, getUserQueryOptions, useGetUser } from "./useGetUser.ts";
 export { getUserSuspenseQueryKey, getUserSuspense, getUserSuspenseQueryOptions, useGetUserSuspense } from "./useGetUserSuspense.ts";
+export { hasAnyUserQueryKey, hasAnyUser, hasAnyUserQueryOptions, useHasAnyUser } from "./useHasAnyUser.ts";
+export { hasAnyUserSuspenseQueryKey, hasAnyUserSuspense, hasAnyUserSuspenseQueryOptions, useHasAnyUserSuspense } from "./useHasAnyUserSuspense.ts";
 export { listTasksQueryKey, listTasks, listTasksQueryOptions, useListTasks } from "./useListTasks.ts";
 export { listTasksSuspenseQueryKey, listTasksSuspense, listTasksSuspenseQueryOptions, useListTasksSuspense } from "./useListTasksSuspense.ts";
 export { listUsersQueryKey, listUsers, listUsersQueryOptions, useListUsers } from "./useListUsers.ts";

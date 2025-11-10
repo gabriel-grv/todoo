@@ -4,9 +4,9 @@
 */
 
 import fetch from "./.kubb/fetcher.ts";
-import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
 import type { UpdateTaskMutationRequest, UpdateTaskMutationResponse, UpdateTaskPathParams, UpdateTask401, UpdateTask403, UpdateTask404 } from "./types/UpdateTask.ts";
+import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const updateTaskMutationKey = () => [{ url: '/tarefas/tasks/:id' }] as const

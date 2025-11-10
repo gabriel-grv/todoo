@@ -69,10 +69,10 @@ export default function AdminTasksPage() {
   useEffect(() => {
     if (userQuery.isLoading) return;
     const role = userQuery.data?.role;
-    if (role && role !== "ADMIN") {
+    if (userQuery.isError || role !== "ADMIN") {
       router.replace("/tarefas/minhas");
     }
-  }, [userQuery.isLoading, userQuery.data?.role, router]);
+  }, [userQuery.isLoading, userQuery.isError, userQuery.data?.role, router]);
 
   const ability = useMemo(() => {
     if (!userId) return createAbilityFor(null);
@@ -80,7 +80,7 @@ export default function AdminTasksPage() {
   }, [userId]);
 
   const usersQuery = useListUsers({
-    query: { enabled: true },
+    query: { enabled: userQuery.data?.role === "ADMIN" },
   });
 
   const availableUsers = useMemo(() => {

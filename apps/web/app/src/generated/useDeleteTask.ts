@@ -4,9 +4,9 @@
 */
 
 import fetch from "./.kubb/fetcher.ts";
-import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
 import type { DeleteTaskMutationResponse, DeleteTaskPathParams, DeleteTask401, DeleteTask403, DeleteTask404 } from "./types/DeleteTask.ts";
+import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const deleteTaskMutationKey = () => [{ url: '/tarefas/tasks/:id' }] as const

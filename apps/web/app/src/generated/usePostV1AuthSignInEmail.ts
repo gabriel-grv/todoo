@@ -4,9 +4,9 @@
 */
 
 import fetch from "./.kubb/fetcher.ts";
-import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
 import type { PostV1AuthSignInEmailMutationRequest, PostV1AuthSignInEmailMutationResponse } from "./types/PostV1AuthSignInEmail.ts";
+import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const postV1AuthSignInEmailMutationKey = () => [{ url: '/v1/auth/sign-in/email' }] as const

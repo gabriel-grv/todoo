@@ -4,9 +4,9 @@
 */
 
 import fetch from "./.kubb/fetcher.ts";
-import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
 import type { RequestConfig, ResponseErrorConfig } from "./.kubb/fetcher.ts";
 import type { GetUserQueryResponse, GetUserPathParams, GetUser401, GetUser403, GetUser404 } from "./types/GetUser.ts";
+import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 export const getUserSuspenseQueryKey = (id: GetUserPathParams["id"]) => [{ url: '/usuarios/users/:id', params: {id:id} }] as const

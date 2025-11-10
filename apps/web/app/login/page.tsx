@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -21,6 +21,31 @@ export default function LoginPage() {
     if (!raw) return "/tarefas";
     return raw.startsWith("/") ? raw : "/tarefas";
   }, [searchParams]);
+
+  // Se não houver usuários, redireciona para registro
+  useEffect(() => {
+    let cancelled = false;
+    async function checkHasAny() {
+      try {
+        const apiBaseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+        const res = await fetch(`${apiBaseURL.replace(/\/$/, "")}/usuarios/has-any`, {
+          credentials: "include",
+        });
+        if (!cancelled && res.ok) {
+          const data = await res.json();
+          if (data?.hasAny === false) {
+            router.replace("/register");
+          }
+        }
+      } catch {
+        // ignora falha; permanece na tela de login
+      }
+    }
+    checkHasAny();
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();

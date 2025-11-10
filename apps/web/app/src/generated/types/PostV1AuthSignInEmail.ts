@@ -9,6 +9,13 @@
 */
 export type PostV1AuthSignInEmail200 = any;
 
+export const postV1AuthSignInEmailMutationRequestRoleEnum = {
+    "ADMIN": "ADMIN",
+    "USER": "USER"
+} as const;
+
+export type PostV1AuthSignInEmailMutationRequestRoleEnumKey = (typeof postV1AuthSignInEmailMutationRequestRoleEnum)[keyof typeof postV1AuthSignInEmailMutationRequestRoleEnum];
+
 export type PostV1AuthSignInEmailMutationRequest = {
     /**
      * @minLength 1
@@ -33,6 +40,10 @@ export type PostV1AuthSignInEmailMutationRequest = {
      * @type string | undefined, uri
     */
     callbackURL?: string;
+    /**
+     * @type string | undefined
+    */
+    role?: PostV1AuthSignInEmailMutationRequestRoleEnumKey;
 };
 
 export type PostV1AuthSignInEmailMutationResponse = PostV1AuthSignInEmail200;
