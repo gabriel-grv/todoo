@@ -10,6 +10,15 @@ import { auth } from './lib/auth.ts'
 import middie from '@fastify/middie'
 import { toNodeHandler } from 'better-auth/node'
 import { fromNodeHeaders } from 'better-auth/node'
+import dotenv from 'dotenv'
+
+// Carrega .env do CWD e também tenta carregar o .env na raiz do monorepo
+dotenv.config()
+try {
+  // apps/api/src/server.ts -> ../../../.env (raiz do repo)
+  // eslint-disable-next-line n/no-unsupported-features/node-builtins
+  dotenv.config({ path: new URL('../../../.env', import.meta.url).pathname })
+} catch {}
 
 const app = Fastify({logger:true}).withTypeProvider<ZodTypeProvider>() // <- tipagem com Zod 
 

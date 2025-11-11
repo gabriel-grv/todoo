@@ -55,9 +55,13 @@ export default function TarefasLayout({ children }: Readonly<{ children: React.R
         { href: "/tarefas/admin", label: "Painel Admin" },
         { href: "/tarefas/minhas", label: "Minhas tarefas" },
         { href: "/tarefas/usuarios", label: "Usuários" },
+        { href: "/tarefas/chat", label: "Chat IA" },
       ] as Array<{ href: string; label: string }>;
     }
-    return [{ href: "/tarefas/minhas", label: "Minhas tarefas" }] as Array<{ href: string; label: string }>;
+    return [
+      { href: "/tarefas/minhas", label: "Minhas tarefas" },
+      { href: "/tarefas/chat", label: "Chat IA" },
+    ] as Array<{ href: string; label: string }>;
   }, [role]);
 
   function isActive(href: string) {
@@ -65,11 +69,12 @@ export default function TarefasLayout({ children }: Readonly<{ children: React.R
     if (href === "/tarefas/minhas") return pathname.startsWith("/tarefas/minhas");
     if (href === "/tarefas/admin") return pathname.startsWith("/tarefas/admin");
     if (href === "/tarefas/usuarios") return pathname.startsWith("/tarefas/usuarios");
+    if (href === "/tarefas/chat") return pathname.startsWith("/tarefas/chat");
     return pathname === href;
   }
 
   return (
-    <main className="max-w-6xl mx-auto p-4 md:p-6">
+    <main className="max-w-6xl mx-auto min-h-screen p-4 md:p-6">
       <div className="flex gap-6">
         <aside className="w-56 shrink-0">
           <div className="mb-4">
@@ -107,8 +112,8 @@ export default function TarefasLayout({ children }: Readonly<{ children: React.R
             </Button>
           </div>
         </aside>
-        <section className="flex-1">
-          <div>{children}</div>
+        <section className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col">{children}</div>
         </section>
       </div>
     </main>
